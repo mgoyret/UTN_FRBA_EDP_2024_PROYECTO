@@ -1,21 +1,20 @@
 #include <Arduino.h>
-
 #include <Wire.h>
 #include "ADS1X15.h"
-//  ACS712 5A  uses 185 mV per A
-//  ACS712 20A uses 100 mV per A
-//  ACS712 30A uses  66 mV per A
-#define PIN_RGB 15
 
+
+//////////////////////////////  ESP32-S2
+#define PIN_RGB   15
 #define ADC_PIN   1
 #define ADC_VREF  1.0
 #define ADC_M     4096.0 // 2^12
 #define ADC_RES   12 // vincular con ADC_M
-#define DIVISOR_R   0.2358 // 67.7k 219.4k
+#define DIVISOR_R 0.2358 // 67.7k 219.4k. Solo si se usa el ADC interno del ESP32-S2
 
-#define FILTRO_CNT 100
-
-//////////////////////////////// ACS712
+////////////////////////////////////////// ACS712
+//  ACS712 5A  uses 185 mV per A
+//  ACS712 20A uses 100 mV per A
+//  ACS712 30A uses  66 mV per A
 /* CALIBRACION ACS712
 La corriente la estoy midiendo real, y la tension real con tester, y la que mide el ADC
 1. corriente en 0, y veo la tension (en teoria 2.5V)
@@ -31,9 +30,7 @@ adc_read_v = adc_read_v+ ((analogRead(ADC_PIN)*(ADC_VREF/ADC_M))/DIVISOR_R);*/
 uint16_t adc_read=0;
 float acs712_i=0, acs712_v=0;
 
-
-
-//////////////////////////////// ADS1115
+////////////////////////////////////////// ADS1115
 #define I2C_SDA_PIN 2
 #define I2C_SCL_PIN 3
 #define ADS1115_ADDR 0x48
@@ -41,6 +38,10 @@ float acs712_i=0, acs712_v=0;
 using namespace ADS1X15;
 ADS1115<TwoWire> ads(Wire); /* Use this for the 16-bit version */  
 
+//////////////////////////////////////////
+#define FILTRO_CNT 100
+
+////////////////////////////////////////// PROGRAMA
 void setup()
 {
   Serial.begin(9600);

@@ -16,12 +16,6 @@ El pin del ADC de la ESP32-S2 tolera hasta 1V, pero tiene una funcion de atenuac
 permite medir hasta tensiones de 3.5V sin siquiera llegar a meter 1V al ADC. Por lo tanto, configurando esta atenuacion de 11dB, no hacen falta resistencias externas
 para acomodar la tension de salida del ACS712 al conectarlo al pin del ADC.
 En cuanto al pin en si, tolera 3.3 porque al poner una salida en high, se pone a esa tension...
-
-
-Calibrando ACS712:
-
-Vout con I=0: 2.515V
-
-resistencias divisor:
-67K7
-219K4
+ATENCION: no me funciona... al configurar atenuacion de 11dB, si le pongo por ejemplo 3.3V al ADC (mayor al Vref 1V), no se quema, pero mite maximas cuentas. Tal vez
+esta atenuacion sea para proteger en caso de exceder, no para poder medir tensiones mayores...
+Para usar el ADCinterno, acondiciono la senal del sensor ACS712, con un divisor resistivo de 68K y 220K
