@@ -1,0 +1,27 @@
+wemos S2 mini: https://www.wemos.cc/en/latest/s2/s2_mini.html
+datasheet esp32-s2: https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf
+manual tecnico esp32-s2> https://www.espressif.com/sites/default/files/documentation/esp32-s2_technical_reference_manual_en.pdf
+
+
+datasheet ACS712: https://www.sparkfun.com/datasheets/BreakoutBoards/0712.pdf
+
+Pagina 9
+dice que para corriente 0, la tension de saida es Vcc/2
+
+paginas 6,7,8 cuadro Output Voltage versus Sensed Current
+Vout = (Vcc/2) + I*S siendo I la corriente sensada, y S la sensibilidad del sensor
+
+En estas paginas podemos ver que, hasta 10A, ninguno de los 3 sensores (5A, 20A, 30A) llega a superar Vout=3.5V.
+El pin del ADC de la ESP32-S2 tolera hasta 1V, pero tiene una funcion de atenuacion que permite medir tensiones mayores. La atenuacion mayor es de 11dB, por lo que
+permite medir hasta tensiones de 3.5V sin siquiera llegar a meter 1V al ADC. Por lo tanto, configurando esta atenuacion de 11dB, no hacen falta resistencias externas
+para acomodar la tension de salida del ACS712 al conectarlo al pin del ADC.
+En cuanto al pin en si, tolera 3.3 porque al poner una salida en high, se pone a esa tension...
+
+
+Calibrando ACS712:
+
+Vout con I=0: 2.515V
+
+resistencias divisor:
+67K7
+219K4
