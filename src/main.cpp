@@ -60,8 +60,7 @@ void setup()
   analogSetAttenuation(ADC_0db); // con 11dB podemos leer hasta 3.55V pero no me funca */
 }
 
-
-void loop()
+void acs712_test(void)
 {
   acs712_v=0;
   for(uint16_t i=0;i<FILTRO_CNT;i++)
@@ -74,7 +73,12 @@ void loop()
   
   Serial.print("Corriente:\t"+String(acs712_i,3)+"A\n");
   Serial.print("Tension:\t"+String(acs712_v,3)+"V\n\n");
+}
 
+
+void loop()
+{
+  acs712_test();
   delay(500);
 }
 
