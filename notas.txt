@@ -19,3 +19,42 @@ En cuanto al pin en si, tolera 3.3 porque al poner una salida en high, se pone a
 ATENCION: no me funciona... al configurar atenuacion de 11dB, si le pongo por ejemplo 3.3V al ADC (mayor al Vref 1V), no se quema, pero mite maximas cuentas. Tal vez
 esta atenuacion sea para proteger en caso de exceder, no para poder medir tensiones mayores...
 Para usar el ADCinterno, acondiciono la senal del sensor ACS712, con un divisor resistivo de 68K y 220K
+
+
+
+
+
+///////////////////////////////////// codigo plecs
+Al cargar, medir tension para sensar bateria.
+Se emepieza argando  duty cosntante
+Cuando se llega a SOC 60% osea 4.1V en la bateria, el duty varia como en el estado B el PLECS
+Cuando se llega a son 95% apaga
+Si baja hasta 95% vuelve a cargar
+
+
+ESP mide tension de bateria para ir cambiando de estados
+
+ESP mide tension de salida del conversor, para medir el duty actual
+
+
+
+Primero la ESP genera con el duty adecuado,1A para carga a conrriente cosntante. Apenas la genera, mide esa misma corriente,y si no es de 1A la va ajustando, variando el duty.
+Esto lo medimos con un amperimetro a la salida del conversor.
+
+Ahora ya va cargando a corriente cosntante. La tensi[on de la bateria va subiendo "sola".
+
+
+Al llegar a SOC 60, pasamos a controlar tension de salida del conversos, constante. La corriente la dejamos.
+
+Para esto, vamos midiendo la tension de saida, y el duty se va moviendo para mantenerla constante.
+
+
+Al 95% deja de cargar, y al 90% vuelve a cargar (por tension cosntante).
+
+
+
+
+PROTECCIOES
+tener una accion que detecte corriente de salida, asi cuando figura mayor a un valor X, se la baje abruptamente a menos de 1A.
+
+Alguna proteccion analoga por tension Tambien
