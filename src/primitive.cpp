@@ -1,8 +1,5 @@
 #include <primitive.h>
 
-extern float global_vo, global_io, global_vi, global_ii, global_duty;
-
-
 #define FILTRO_CNT 1
 
 float get_io(void)
@@ -80,8 +77,18 @@ int security_error( void )
     if( global_io > PEAK_IO ||
         global_vo > PEAK_VO ||
         global_ii > PEAK_II ||
-        global_vi > PEAK_VI )
+        global_vi > PEAK_VI ||
+        global_io < NULL_CURRENT ||
+        global_vo < NULL_VOLTAGE_O ||
+        global_ii < NULL_CURRENT ||
+        global_vi < NULL_VOLTAGE_I )
         res = true;
 
     return res;
+}
+
+
+void reset( void ) // COMPLETAR si se usa un boton, que sea interrupcion y este sea el handler
+{
+    flag_reset=true;
 }

@@ -6,10 +6,8 @@
 #include<ADS1115_WE.h> 
 #include <esp32s2.h>
 
-#define I2C_ADS1115_ADDR 0x48
+#define ADS1115_I2C_ADDR 0x48
 
-#define I2C_SDA_PIN 2
-#define I2C_SCL_PIN 3
 #define ADS1115_ADDR 0x48
 
 #define ADS1115_CHA0 ADS1115_COMP_0_GND

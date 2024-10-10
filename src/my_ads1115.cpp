@@ -3,7 +3,7 @@
 
 // using namespace puesto en el .h
 //ADS1115<TwoWire> ads(Wire); /* Use this for the 16-bit version */  
-ADS1115_WE adc = ADS1115_WE(I2C_ADS1115_ADDR);
+ADS1115_WE adc = ADS1115_WE(ADS1115_I2C_ADDR);
 volatile bool convReady = false;
 
 void convReadyAlert()
@@ -22,7 +22,7 @@ void my_ads1115_setup()
   adc.setConvRate(ADS1115_860_SPS);
   adc.setMeasureMode(ADS1115_SINGLE);
   adc.setAlertPinToConversionReady();
-  attachInterrupt(digitalPinToInterrupt(PIN_INTERRUPT), convReadyAlert, FALLING);
+  attachInterrupt(digitalPinToInterrupt(ESP32_S2_MINI_PIN_INTERRUPT), convReadyAlert, FALLING);
 }
 
 

@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <my_ads1115.h>
 #include <main.h>
+#include <globals.h>
 
 ////////////////////////////////////////// ACS712
 //  ACS712 5A  uses 185 mV per A
@@ -20,7 +21,7 @@ tester da 2.877, t ADC 2.875
 Vsensor con corriente nula = 3.186
 sensibilidad real del sensor = (2.875-2.499)/(2-0) = 188mV/A
 La tension segun el ADC fue realizada con filtro promediador y esta linea:
-adc_read_v = adc_read_v+ ((analogRead(ADC_PIN)*(ADC_VREF/ADC_M))/DIVISOR_R);*/
+adc_read_v = adc_read_v+ ((analogRead(ESP32_S2_MINI_ADC_PIN)*(ESP32_S2_MINI_ADC_VREF/ESP32_S2_MINI_ADC_M))/DIVISOR_R);*/
 #define ACS712_V_I0 2.499
 #define ACS712_S    0.188
 
@@ -34,6 +35,10 @@ adc_read_v = adc_read_v+ ((analogRead(ADC_PIN)*(ADC_VREF/ADC_M))/DIVISOR_R);*/
 #define PEAK_VI (float)15.0
 #define PEAK_II (float)2.0
 
+#define NULL_CURRENT    (float)0.0001
+#define NULL_VOLTAGE_O  (float)0.5 // el minimo de la bateria es 2.5, no deberia haber menos que eso
+#define NULL_VOLTAGE_I  (float)0.5 // COMPLETAR para la bateria de 12V de entrada, habria que ver el valor adecuado
+
 float get_io( void );
 float get_vo( void );
 float get_ii( void );
@@ -43,6 +48,8 @@ void set_duty( float duty_val );
 
 void update_meassure( void );
 int security_error( void );
+void reset( void );
+
 
 void esp32_adc_setup( void );
 

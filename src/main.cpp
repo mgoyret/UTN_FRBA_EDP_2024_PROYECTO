@@ -2,19 +2,13 @@
 
 //////////////////////////////// Variables globales. Todas estas deben ser medidas y actualizadas en actualizar_mediciones()
 float global_vo=0, global_io=0, global_vi=0, global_ii=0, global_duty=0;
+int flag_discharge = false, flag_reset=false;
 
-
-unsigned long oldTime,currTime;
-
-
-
+unsigned long oldTime;
 
 void setup()
 {
-  Serial.begin(9600);
-  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
-  Wire.setClock(400000);
-  pinMode(PIN_INTERRUPT, INPUT_PULLUP);
+  my_esp32s2_mini_setup();
   my_ads1115_setup();
 }
 
