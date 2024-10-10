@@ -1,64 +1,87 @@
-#include <primitivas.h>
+#include <primitive.h>
 
-extern float SOC;
-extern float Iout;
-extern float Vout;
-extern float duty;
-
-#define FILTRO_CNT 100
-extern ADS1115<TwoWire> ads;
+extern float global_vo, global_io, global_vi, global_ii, global_duty;
 
 
-void esp32_adc_setup(void)
+#define FILTRO_CNT 1
+
+float get_io(void)
 {
-    Serial.begin(115200);
-    while (!Serial);
-    adcAttachPin(ADC_PIN);
-    analogSetClockDiv(1);
-    analogReadResolution((uint8_t)ADC_RES);
-    analogSetAttenuation(ADC_0db); // con 11dB podemos leer hasta 3.55V pero no me funca
-}
-
-float get_i0(void)
-{
-    float corriente=0;
-
     float acs712_v=0, acs712_i=0;
-    uint16_t adc_read=0;
-    for(uint16_t i=0;i<FILTRO_CNT;i++)
-    {
-        adc_read = ads.readADCSingleEnded(0);
-        acs712_v += ads.computeVolts(adc_read);//lectura del sensor
-    }
-    acs712_v /= FILTRO_CNT;
+
+    acs712_v = my_ads1115_filtered(ADS1115_CH_IO, FILTRO_CNT);
     acs712_i = (acs712_v-ACS712_V_I0)/ACS712_S; //Ecuación  para obtener la corriente
     //Serial.print("Corriente:\t"+String(acs712_i,3)+"A\n");
     //Serial.print("Tension:\t"+String(acs712_v,3)+"V\n\n");
-    corriente = acs712_i;
+    global_io = acs712_i;
 
-    return corriente;
+    return acs712_i;
 }
 
 float get_vo(void)
 {
-    float tension=0;
-    return tension;
+    float voltage=0;
+
+    voltage = my_ads1115_filtered(ADS1115_CH_VO, FILTRO_CNT);
+    //Serial.print("Tension:\t"+String(voltage,3)+"V\n\n");
+    global_vo = voltage;
+
+    return voltage;
 }
+
+
+float get_ii(void)
+{
+    float acs712_v=0, acs712_i=0;
+
+    acs712_v = my_ads1115_filtered(ADS1115_CH_II, FILTRO_CNT);
+    acs712_i = (acs712_v-ACS712_V_I0)/ACS712_S; //Ecuación  para obtener la corriente
+    global_ii = acs712_i;
+
+    return acs712_i;
+}
+
+
+float get_vi(void)
+{
+    float voltage=0;
+
+    voltage = my_ads1115_filtered(ADS1115_CH_VI, FILTRO_CNT);
+    global_vi = voltage;
+    
+    return voltage;
+}
+
 
 float get_duty(void)
 {
-    float tension=0;
-    return tension;
+    float duty=global_duty;
+    return duty;
 }
 
 void set_duty(float duty_val)
 {
-
+    /* enviar valor del duty al controlador */
+    global_duty = duty_val;
 }
 
-void actualizar_mediciones(void)
+void update_meassure(void)
 {
-    get_i0();
+    get_io();
     get_vo();
-    get_duty();
+    get_ii();
+    get_vi();
+}
+
+int security_error( void )
+{
+    int res = false;
+    
+    if( global_io > PEAK_IO ||
+        global_vo > PEAK_VO ||
+        global_ii > PEAK_II ||
+        global_vi > PEAK_VI )
+        res = true;
+
+    return res;
 }

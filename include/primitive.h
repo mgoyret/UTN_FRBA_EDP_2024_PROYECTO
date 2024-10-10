@@ -1,5 +1,5 @@
-#ifndef PRIMITIVAS_H
-#define PRIMITIVAS_H
+#ifndef PRIMITIVE_H
+#define PRIMITIVE_H
 
 #include <stdio.h>
 #include <Arduino.h>
@@ -24,14 +24,26 @@ adc_read_v = adc_read_v+ ((analogRead(ADC_PIN)*(ADC_VREF/ADC_M))/DIVISOR_R);*/
 #define ACS712_V_I0 2.499
 #define ACS712_S    0.188
 
-float get_i0(void);
-float get_vo(void);
-float get_duty(void);
-void set_duty(float duty_val);
+#define ADS1115_CH_IO   ADS1115_CHA0
+#define ADS1115_CH_VO   ADS1115_CHA1
+#define ADS1115_CH_II   ADS1115_CHA2
+#define ADS1115_CH_VI   ADS1115_CHA3
 
-void actualizar_mediciones(void);
+#define PEAK_VO (float)6.0
+#define PEAK_IO (float)2.0
+#define PEAK_VI (float)15.0
+#define PEAK_II (float)2.0
+
+float get_io( void );
+float get_vo( void );
+float get_ii( void );
+float get_vi( void );
+float get_duty( void );
+void set_duty( float duty_val );
+
+void update_meassure( void );
+int security_error( void );
 
 void esp32_adc_setup( void );
-
 
 #endif

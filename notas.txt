@@ -58,3 +58,21 @@ PROTECCIOES
 tener una accion que detecte corriente de salida, asi cuando figura mayor a un valor X, se la baje abruptamente a menos de 1A.
 
 Alguna proteccion analoga por tension Tambien
+
+
+
+
+DEFINIR
+si hago actualizar_mediciones() en cada ciclo, entonces no usar los gets en la MDE, sino preguntar por la variables globales directo. Los SET si que los necesito
+Si no, no hacer actualizar_mediciones(), directamente get_() y set_() cada vez.
+
+
+
+
+
+
+hacer
+probar velocidad de ADS midiendo 4 canales a la vez
+
+generar pwm con el pin y timer
+probar que detecte estado de error ante corto, alta corriente, picos de tension, o tensiones nulas.
