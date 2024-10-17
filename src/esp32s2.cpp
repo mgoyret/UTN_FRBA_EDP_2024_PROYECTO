@@ -16,5 +16,6 @@ void my_esp32s2_mini_setup(void)
     Serial.begin(ESP32_S2_MINI_SERIAL_SPEED_BAUD);
     Wire.begin(ESP32_S2_MINI_I2C_SDA_PIN, ESP32_S2_MINI_I2C_SCL_PIN);
     Wire.setClock(ESP32_S2_MINI_I2C_SPEED_HZ);
-    pinMode(ESP32_S2_MINI_PIN_INTERRUPT, INPUT_PULLUP);
+    pinMode(ESP32_S2_MINI_PIN_INTERRUPT_4, INPUT_PULLUP); // para interrupcion
+    pinMode(ESP32_S2_MINI_PIN_INTERRUPT_5, INPUT_PULLUP);
 }

@@ -27,8 +27,8 @@ adc_read_v = adc_read_v+ ((analogRead(ESP32_S2_MINI_ADC_PIN)*(ESP32_S2_MINI_ADC_
 
 #define ADS1115_CH_IO   ADS1115_CHA0
 #define ADS1115_CH_VO   ADS1115_CHA1
-#define ADS1115_CH_II   ADS1115_CHA2
-#define ADS1115_CH_VI   ADS1115_CHA3
+#define ADS1115_CH_II   ADS1115_CHA0
+#define ADS1115_CH_VI   ADS1115_CHA1
 
 #define PEAK_VO (float)6.0
 #define PEAK_IO (float)2.0
@@ -46,11 +46,11 @@ float get_vi( void );
 float get_duty( void );
 void set_duty( float duty_val );
 
-void update_meassure( void );
+void update_meassures( void );
+void update_adc_in(void);
+void update_adc_out(void);
+
 int security_error( void );
 void reset( void );
-
-
-void esp32_adc_setup( void );
 
 #endif

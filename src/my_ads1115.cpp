@@ -1,52 +1,47 @@
 
 #include <my_ads1115.h>
 
-// using namespace puesto en el .h
-// ADS1115<TwoWire> ads(Wire); /* Use this for the 16-bit version */
-ADS1115_WE adc = ADS1115_WE(ADS1115_I2C_ADDR);
-volatile bool convReady = false;
+ADS1115_WE adc_in   =   ADS1115_WE(ADS1115_I2C_ADDR_1);
+ADS1115_WE adc_out  =   ADS1115_WE(ADS1115_I2C_ADDR_2);
 
-void convReadyAlert()
-{
-    convReady = true;
-}
+volatile bool adc_in_conv_ready = false;
+volatile bool adc_out_conv_ready = false;
+
 
 void my_ads1115_setup()
 {
-    if (!adc.init())
-        Serial.println("ADS1115 not connected!");
-
-    adc.setVoltageRange_mV(ADS1115_RANGE_6144);
-    adc.setAlertPinMode(ADS1115_ASSERT_AFTER_1);
-    adc.setConvRate(ADS1115_860_SPS);
-    adc.setMeasureMode(ADS1115_SINGLE);
-    adc.setAlertPinToConversionReady();
-    attachInterrupt(digitalPinToInterrupt(ESP32_S2_MINI_PIN_INTERRUPT), convReadyAlert, FALLING);
-}
-
-float readChannel_V(ADS1115_MUX channel)
-{
-    float voltage = 0.0;
-
-    adc.setCompareChannels(channel);
-    adc.startSingleMeasurement();
-
-    while (!convReady)
-        ;
-    if (convReady)
+    if (!adc_in.init())
+        Serial.println("ADS1115 1 not connected!");
+    else
     {
-        voltage = adc.getResult_V();
-        convReady = false;
+        adc_in.setVoltageRange_mV(ADS1115_RANGE_6144);
+        adc_in.setCompareChannels(ADS1115_CH_I);
+        adc_in.setAlertPinMode(ADS1115_ASSERT_AFTER_1);
+        adc_in.setConvRate(ADS1115_860_SPS);
+        adc_in.setAlertPinToConversionReady();
+        attachInterrupt(digitalPinToInterrupt(ESP32_S2_MINI_PIN_INTERRUPT_4), adc_in_conv_ready_handler, FALLING);
+        adc_in.startSingleMeasurement();
     }
-
-    return voltage;
+    if (!adc_out.init())
+        Serial.println("ADS1115 2 not connected!");
+    else
+    {
+        adc_out.setVoltageRange_mV(ADS1115_RANGE_6144);
+        adc_out.setCompareChannels(ADS1115_CH_I);
+        adc_out.setAlertPinMode(ADS1115_ASSERT_AFTER_1);
+        adc_out.setConvRate(ADS1115_860_SPS);
+        adc_out.setAlertPinToConversionReady();
+        attachInterrupt(digitalPinToInterrupt(ESP32_S2_MINI_PIN_INTERRUPT_5), adc_out_conv_ready_handler, FALLING);
+        adc_out.startSingleMeasurement();
+    }
 }
 
-float my_ads1115_filtered(ADS1115_MUX channel, int cnt_filter)
+void adc_in_conv_ready_handler()
 {
-    float volts_measure = 0;
-    for (uint16_t i = 0; i < cnt_filter; i++)
-        volts_measure += readChannel_V(channel);
-    volts_measure /= cnt_filter;
-    return volts_measure;
+    adc_in_conv_ready = true;
+}
+
+void adc_out_conv_ready_handler()
+{
+    adc_out_conv_ready = true;
 }
