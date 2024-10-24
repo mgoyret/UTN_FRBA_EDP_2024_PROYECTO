@@ -28,8 +28,7 @@ float get_vi(void)
 
 float get_duty(void)
 {
-    float duty = global_duty;
-    return duty;
+    return (float)global_duty;
 }
 
 void set_duty(float duty_val)
