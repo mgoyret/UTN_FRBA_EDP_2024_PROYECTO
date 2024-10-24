@@ -34,7 +34,11 @@ float get_duty(void)
 
 void set_duty(float duty_val)
 {
-    //COMPLETAR enviar valor del duty al controlador
+    uint32_t duty_uint32 = 0;
+
+    duty_uint32 = (uint32_t)((int)(duty_val*ESP32_S2_MINI_PWM_MAX_VAL));
+    ledcWrite(ESP32_S2_MINI_PWM_1_CHANNEL, duty_uint32);    // setea el duty del PWM
+    ledcWrite(ESP32_S2_MINI_PWM_2_CHANNEL, (ESP32_S2_MINI_PWM_MAX_VAL-duty_uint32));
     global_duty = duty_val;
 }
 

@@ -18,6 +18,15 @@
 #define ESP32_S2_MINI_I2C_SPEED_HZ      400000
 #define ESP32_S2_MINI_SERIAL_SPEED_BAUD 9600
 
+// FRAN
+#define ESP32_S2_MINI_PWM_1_CHANNEL         (uint8_t)0
+#define ESP32_S2_MINI_PWM_1_PIN             5   // COMPLETAR gpio pin a definir
+#define ESP32_S2_MINI_PWM_2_CHANNEL         (uint8_t)1
+#define ESP32_S2_MINI_PWM_2_PIN             6   // COMPLETAR gpio pin a definir
+#define ESP32_S2_MINI_PWM_FRECUENCY         10000
+#define ESP32_S2_MINI_PWM_RESOLUTION_BITS   12//es la maxima a 10khz con 80Mhz de clock(la api la selecciona), nos da pasos de 0,00025, habria que reajustar la SM
+#define ESP32_S2_MINI_PWM_MAX_VAL           4095//; rango: 0--> apagado | 1--> 0,00025 | 4095 --> prendido
+
 void my_esp32s2_mini_setup( void );
 void esp32_adc_setup( void );
 

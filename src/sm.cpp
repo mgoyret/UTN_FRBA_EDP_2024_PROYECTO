@@ -22,9 +22,9 @@ void state_machine()
 			else if (global_io >= (float)(CHARGE_CONST_I * 1.25))
 				set_duty((float)(global_duty + (float)0.001)); // por seguridad
 			else if (global_io <= (float)(CHARGE_CONST_I * (1.0 - 0.15)))
-				set_duty((float)(global_duty - (float)0.0001)); // minimo en permante
+				set_duty((float)(global_duty - (float)0.00025)); // minimo en permante. 0.00025 es el minimo paso posible con el generador de pwm
 			else if (global_io >= (float)(CHARGE_CONST_I * (1.0 + 0.15)))
-				set_duty((float)(global_duty + (float)0.0001)); // maximo en permanete
+				set_duty((float)(global_duty + (float)0.00025)); // maximo en permanete
 		}
 		if (global_vo >= CVCC_THRESHOLD) // COMPLETAR, creo que es asi, con corriente llega hasta el pico de tension y ahi cambio
 			present_state = STATE_CONSTANT_VOLTAGE;
@@ -36,9 +36,9 @@ void state_machine()
 		else if (global_vo <= (float)(CHARGE_CONST_V * (1.0 - 0.07)) && global_vo >= 0)
 			set_duty((float)(global_duty + (float)0.001));
 		else if (global_vo >= (float)(CHARGE_CONST_V * (1.0 + 0.02)))
-			set_duty((float)(global_duty - (float)0.0001));
+			set_duty((float)(global_duty - (float)0.00025));
 		else if (global_vo <= (float)(CHARGE_CONST_V * (1.0 - 0.02)) && global_vo >= 0)
-			set_duty((float)(global_duty + (float)0.0001));
+			set_duty((float)(global_duty + (float)0.00025));
 		if (global_io <= CHARGE_CUTOFF_I)
 			present_state = STATE_CHARGED;
 		break;
@@ -64,9 +64,9 @@ void state_machine()
 			else if (global_io <= (float)(DISCHARGE_I * 1.25))
 				set_duty(1.0- (float)(global_duty + (float)0.001)); // por seguridad
 			else if (global_io >= (float)(DISCHARGE_I * (1.0 - 0.15)))
-				set_duty(1.0- (float)(global_duty - (float)0.0001)); // minimo en permante
+				set_duty(1.0- (float)(global_duty - (float)0.00025)); // minimo en permante
 			else if (global_io <= (float)(DISCHARGE_I * (1.0 + 0.15)))
-				set_duty(1.0- (float)(global_duty + (float)0.0001)); // maximo en permanete
+				set_duty(1.0- (float)(global_duty + (float)0.00025)); // maximo en permanete
 		}
 		if (!flag_discharge || global_vo <= DISCHARGE_CUTOFF_V)
 			present_state = STATE_CONSTANT_CURRENT;
