@@ -55,18 +55,18 @@ void state_machine()
 			set_duty(DUTY_DISCHARGE_INIT);
 		else
 		{ // COMPLETAR chequear bien los <= o >=
-			if (global_io >= (float)(DISCHARGE_I * 0.3))
-				set_duty(1.0- (float)(global_duty - (float)0.01)); // estado inicial
-			else if (global_io <= (float)(DISCHARGE_I * 1.3))
-				set_duty(1.0- (float)(global_duty + (float)0.01));
-			else if (global_io >= (float)(DISCHARGE_I * 0.6))
-				set_duty(1.0- (float)(global_duty - (float)0.001)); // por seguridad
-			else if (global_io <= (float)(DISCHARGE_I * 1.25))
-				set_duty(1.0- (float)(global_duty + (float)0.001)); // por seguridad
-			else if (global_io >= (float)(DISCHARGE_I * (1.0 - 0.15)))
-				set_duty(1.0- (float)(global_duty - (float)0.0001)); // minimo en permante
-			else if (global_io <= (float)(DISCHARGE_I * (1.0 + 0.15)))
-				set_duty(1.0- (float)(global_duty + (float)0.0001)); // maximo en permanete
+			if (global_io >= -(float)(DISCHARGE_I * 0.3))
+				set_duty((float)(global_duty - (float)0.01)); // estado inicial y seguridad
+			else if (global_io <= -(float)(DISCHARGE_I * 1.35))
+				set_duty((float)(global_duty + (float)0.01)); // por seguridad
+			else if (global_io >= -(float)(DISCHARGE_I * 0.6))
+				set_duty((float)(global_duty - (float)0.001));
+			else if (global_io <= -(float)(DISCHARGE_I * 1.25))
+				set_duty((float)(global_duty + (float)0.001));
+			else if (global_io >= -(float)(DISCHARGE_I * 0.85))
+				set_duty((float)(global_duty - (float)0.00025)); // minimo en permante
+			else if (global_io <= -(float)(DISCHARGE_I * (1.15)))
+				set_duty((float)(global_duty + (float)0.00025)); // maximo en permanete
 		}
 		if (!flag_discharge || global_vo <= DISCHARGE_CUTOFF_V)
 			present_state = STATE_CONSTANT_CURRENT;
