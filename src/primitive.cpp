@@ -35,10 +35,15 @@ float get_duty(void)
 void set_duty(float duty_val)
 {
     uint32_t duty_uint32 = 0;
-
     duty_uint32 = (uint32_t)((int)(duty_val*ESP32_S2_MINI_PWM_MAX_VAL));
-    ledcWrite(ESP32_S2_MINI_PWM_1_CHANNEL, duty_uint32);    // setea el duty del PWM
-    ledcWrite(ESP32_S2_MINI_PWM_2_CHANNEL, (ESP32_S2_MINI_PWM_MAX_VAL-duty_uint32));
+
+    ledc_set_duty(LEDC_MODE, LEDC_CHANNEL1, duty_uint32);
+    ledc_update_duty(LEDC_MODE, LEDC_CHANNEL1);
+
+    ledc_set_duty(LEDC_MODE, LEDC_CHANNEL2, duty_uint32);
+    ledc_update_duty(LEDC_MODE, LEDC_CHANNEL2);
+    //GPIO.func_out_sel_cfg[ESP32_S2_MINI_PWM_2_PIN].inv_sel = 1;//invierte la señal
+
     global_duty = duty_val;
 }
 
@@ -106,24 +111,35 @@ void update_meassures(void)
     update_adc_out();
 }
 
-int security_error(void)
+void set_duty_off( void )
 {
-    int res = false;
-
-    if (global_io > PEAK_IO ||
-        global_vo > PEAK_VO ||
-        global_ii > PEAK_II ||
-        global_vi > PEAK_VI ||
-        global_io < NULL_CURRENT ||
-        global_vo < NULL_VOLTAGE_O ||
-        global_ii < NULL_CURRENT ||
-        global_vi < NULL_VOLTAGE_I)
-        res = true;
-
-    return res;
+	GPIO.func_out_sel_cfg[ESP32_S2_MINI_PWM_2_PIN].inv_sel = 0;
+	set_duty(0);
 }
 
-void reset(void) // COMPLETAR si se usa un boton, que sea interrupcion y este sea el handler
+int security_error(void)
+{
+    int err = false;
+
+    if (global_io > PEAK_IO || global_vo > PEAK_VO
+                            || global_ii > PEAK_II
+                            || global_vi > PEAK_VI
+                            || global_io < NULL_CURRENT
+                            || global_vo < NULL_VOLTAGE_O
+                            || global_ii < NULL_CURRENT
+                            || global_vi < NULL_VOLTAGE_I)
+        err=true;
+
+    return err;
+}
+
+void reset(void)
+{
+	GPIO.func_out_sel_cfg[ESP32_S2_MINI_PWM_2_PIN].inv_sel = 1; // niega la señal PWM de este canal
+	flag_reset = false;
+}
+
+void handler_reset(void) // COMPLETAR si se usa un boton, que sea interrupcion y este sea el handler
 {
     flag_reset = true;
 }
