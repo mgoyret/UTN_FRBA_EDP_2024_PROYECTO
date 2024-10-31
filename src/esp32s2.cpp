@@ -1,14 +1,46 @@
 #include <esp32s2.h>
 
-void esp32_adc_setup(void)
+
+void setup_pwm(void) // basada en funcion de espressif
 {
-    Serial.begin(115200);
-    while (!Serial)
-        ;
-    adcAttachPin(ESP32_S2_MINI_ADC_PIN);
-    analogSetClockDiv(1);
-    analogReadResolution((uint8_t)ESP32_S2_MINI_ADC_RES);
-    analogSetAttenuation(ADC_0db); // con 11dB podemos leer hasta 3.55V pero no me funca
+    // Prepare and then apply the LEDC PWM timer configuration
+    ledc_timer_config_t ledc_timer = {
+        .speed_mode       = LEDC_MODE,
+        .duty_resolution  = LEDC_TIMER_10_BIT,
+        .timer_num        = LEDC_TIMER,
+        .freq_hz          = LEDC_FREQUENCY,  // Set output frequency at 4 kHz
+        .clk_cfg          = LEDC_AUTO_CLK
+    };
+    ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
+
+    // Prepare and then apply the LEDC PWM channel configuration
+    ledc_channel_config_t ledc_channel = {
+        .gpio_num       = ESP32_S2_MINI_PWM_1_PIN,
+        .speed_mode     = LEDC_MODE,
+        .channel        = LEDC_CHANNEL1,
+        .intr_type      = LEDC_INTR_DISABLE,
+        .timer_sel      = LEDC_TIMER,
+        .duty           = 0, // Set duty to 0%
+        .hpoint         = 0
+    };
+    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+
+    ledc_channel_config_t ledc_channe2 = {
+        .gpio_num       = ESP32_S2_MINI_PWM_2_PIN,
+        .speed_mode     = LEDC_MODE,
+        .channel        = LEDC_CHANNEL2,
+        .intr_type      = LEDC_INTR_DISABLE,
+        .timer_sel      = LEDC_TIMER,
+        .duty           = 0, // Set duty to 0%
+        .hpoint         = 0
+    };
+    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channe2));
+    GPIO.func_out_sel_cfg[ESP32_S2_MINI_PWM_2_PIN].inv_sel = 1;//invierte la señal
+
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL1, 0)); // inicializo dutys en cero
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL1));
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL2, 0));
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL2));
 }
 
 void my_esp32s2_mini_setup(void)
@@ -16,6 +48,8 @@ void my_esp32s2_mini_setup(void)
     Serial.begin(ESP32_S2_MINI_SERIAL_SPEED_BAUD);
     Wire.begin(ESP32_S2_MINI_I2C_SDA_PIN, ESP32_S2_MINI_I2C_SCL_PIN);
     Wire.setClock(ESP32_S2_MINI_I2C_SPEED_HZ);
-    pinMode(ESP32_S2_MINI_PIN_INTERRUPT_4, INPUT_PULLUP); // para interrupcion
+    pinMode(ESP32_S2_MINI_PIN_INTERRUPT_4, INPUT_PULLUP);
     pinMode(ESP32_S2_MINI_PIN_INTERRUPT_5, INPUT_PULLUP);
+
+    setup_pwm();
 }

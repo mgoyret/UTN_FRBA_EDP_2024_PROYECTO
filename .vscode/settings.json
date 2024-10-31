@@ -14,6 +14,7 @@
         "ads1x15.h": "c",
         "functional": "cpp",
         "istream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "optional": "cpp"
     }
 }

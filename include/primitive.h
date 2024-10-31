@@ -51,6 +51,8 @@ void update_adc_in(void);
 void update_adc_out(void);
 
 int security_error( void );
+void set_duty_off( void );
 void reset( void );
+void handler_reset( void );
 
 #endif
