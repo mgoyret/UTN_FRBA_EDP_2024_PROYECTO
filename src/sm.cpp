@@ -4,6 +4,7 @@ void state_machine()
 {
 	static enum State present_state = STATE_CONSTANT_CURRENT;
 
+
 	if (security_error())
 	{
 		set_duty_off();
@@ -12,25 +13,29 @@ void state_machine()
 	switch (present_state)
 	{
 	case STATE_CONSTANT_CURRENT:
-		if (global_io < NULL_CURRENT || global_duty <= 0.5)
+		Serial.print("############################ STATE_CONSTANT_CURRENT\n");
+		if (global_io < NULL_CURRENT)
 			set_duty(DUTY_CHARGE_INIT);
 		else
 		{
 			if (global_io <= (float)(CHARGE_CONST_I * 0.3))
-				set_duty((float)(global_duty - (float)0.01)); // estado inicial - ajuste grueso
+				set_duty((float)(global_duty + (float)0.01)); // estado inicial - ajuste grueso
 			else if (global_io >= (float)(CHARGE_CONST_I * 1.3))
-				set_duty((float)(global_duty + (float)0.01));
-			else if (global_io <= (float)(CHARGE_CONST_I * (1.0 - 0.15)))
-				set_duty((float)(global_duty - (float)0.001)); // en permante - ajuste fino - 0.001 minimo paso posible con pwm_res
-			else if (global_io >= (float)(CHARGE_CONST_I * (1.0 + 0.15)))
-				set_duty((float)(global_duty + (float)0.001));
+				set_duty((float)(global_duty - (float)0.01));
+			else if (global_io <= (float)(CHARGE_CONST_I * 0.85))
+				set_duty((float)(global_duty + (float)0.001)); // en permante - ajuste fino - 0.001 minimo paso posible con pwm_res
+			else if (global_io >= (float)(CHARGE_CONST_I * 1.15))
+				set_duty((float)(global_duty - (float)0.001));
 		}
 		if (global_vo >= CVCC_THRESHOLD) // COMPLETAR, creo que es asi, con corriente llega hasta el pico de tension y ahi cambio
 										// en teoria es asi, pero en la realidad habria que ver si no es hasta que llegue al 99.9%
-			present_state = STATE_CONSTANT_VOLTAGE;
+			{
+				present_state = STATE_CONSTANT_VOLTAGE;
+			}
 		break;
 
 	case STATE_CONSTANT_VOLTAGE:
+		Serial.print("############################ STATE_CONSTANT_VOLTAGE\r\n");
 		if (global_vo >= (float)(CHARGE_CONST_V * (1.0 + 0.07)))
 			set_duty((float)(global_duty - (float)0.001));
 		else if (global_vo <= (float)(CHARGE_CONST_V * (1.0 - 0.07)) && global_vo >= 0)
@@ -44,13 +49,17 @@ void state_machine()
 		break;
 
 	case STATE_CHARGED:
+		present_state = STATE_ERROR;
+		//Serial.print("############################ BATERIA CARGADA");
+		/*
 		if (flag_discharge)
 			present_state = STATE_DISCHARGE;
 		else if (global_vo < NONIMAL_V)
 			present_state = STATE_CONSTANT_CURRENT;
 		break;
-
+		*/
 	case STATE_DISCHARGE:
+	//Serial.print("############################ STATE_DISCHARGE\r\n");
 		if (global_duty >= 0.5)
 			set_duty(DUTY_DISCHARGE_INIT);
 		else

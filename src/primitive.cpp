@@ -2,17 +2,21 @@
 
 float get_io(void)
 {
-    float acs712_v = adc_out.getResult_V();
-    global_io = (acs712_v - ACS712_V_I0) / ACS712_S; // Ecuación  para obtener la corriente
+    float acs712_v = 0;
+    adc_out.setCompareChannels(ADS1115_CH_I);
+    acs712_v = adc_out.getResult_V();
+    global_io = -(acs712_v - ACS712_V_I0) / ACS712_S; // Ecuación  para obtener la corriente
     return global_io;
 }
 
 float get_vo(void)
 {
+    adc_out.setCompareChannels(ADS1115_CH_V);
     global_vo = adc_out.getResult_V();
+    global_vo = global_vo/PUENTE_R;
     return global_vo;
 }
-
+/*
 float get_ii(void)
 {
     float acs712_v = adc_in.getResult_V();
@@ -25,7 +29,7 @@ float get_vi(void)
     global_vi = adc_in.getResult_V();
     return global_vi;
 }
-
+*/
 float get_duty(void)
 {
     return (float)global_duty;
@@ -33,40 +37,40 @@ float get_duty(void)
 
 void set_duty(float duty_val)
 {
+    //Serial.print("############################ set_duty()\r\n");
     uint32_t duty_uint32 = 0;
     duty_uint32 = (uint32_t)((int)(duty_val*ESP32_S2_MINI_PWM_MAX_VAL));
 
-    ledc_set_duty(LEDC_MODE, LEDC_CHANNEL1, duty_uint32);
+    ledc_set_duty(LEDC_MODE, LEDC_CHANNEL1, duty_uint32);//duty_uint32
     ledc_update_duty(LEDC_MODE, LEDC_CHANNEL1);
-
     ledc_set_duty(LEDC_MODE, LEDC_CHANNEL2, duty_uint32);
     ledc_update_duty(LEDC_MODE, LEDC_CHANNEL2);
     //GPIO.func_out_sel_cfg[ESP32_S2_MINI_PWM_2_PIN].inv_sel = 1;//invierte la señal
 
     global_duty = duty_val;
 }
-
+/*
 void update_adc_in(void)
 {
     static unsigned long old_time_in;
-    static uint8_t channel_in=0;
+    static uint8_t state_channel_in=0;
 
     if (adc_in_conv_ready)
     {
-        adc_in_conv_ready=false;
-        switch (channel_in)
+        adc_in_conv_ready = false;
+        switch (state_channel_in)
         {
         case ADS1115_CH_I_NUM:
             old_time_in = micros();
             get_ii();
             adc_in.setCompareChannels(ADS1115_CH_V);
-            channel_in=ADS1115_CH_V_NUM;
+            state_channel_in=ADS1115_CH_V_NUM;
             break;
         case ADS1115_CH_V_NUM:
             Serial.print("\ntime in: "+String(micros() - old_time_in));
             get_vi();
             adc_in.setCompareChannels(ADS1115_CH_I);
-            channel_in=ADS1115_CH_I_NUM;
+            state_channel_in=ADS1115_CH_I_NUM;
             break;
         default:
             break;
@@ -74,39 +78,16 @@ void update_adc_in(void)
         adc_in.startSingleMeasurement();
     }
 }
-
+*/
 void update_adc_out(void)
 {
-    static unsigned long old_time_out;
-    static uint8_t channel_out=0;
-
-    if (adc_out_conv_ready)
-    {
-        adc_out_conv_ready=false;
-        switch (channel_out)
-        {
-        case ADS1115_CH_I_NUM:
-            old_time_out = micros();
-            get_io();
-            adc_out.setCompareChannels(ADS1115_CH_V);
-            channel_out=ADS1115_CH_V_NUM;
-            break;
-        case ADS1115_CH_V_NUM:
-            Serial.print("\ntime out: "+String(micros() - old_time_out));
-            get_vo();
-            adc_out.setCompareChannels(ADS1115_CH_I);
-            channel_out=ADS1115_CH_I_NUM;
-            break;
-        default:
-            break;
-        }
-        adc_out.startSingleMeasurement();
-    }
+    get_vo();
+    get_io();
 }
 
 void update_meassures(void)
 {
-    update_adc_in();
+    //update_adc_in();
     update_adc_out();
 }
 
@@ -120,6 +101,7 @@ int security_error(void)
 {
     int err = false;
 
+/*
     if (global_io > PEAK_IO || global_vo > PEAK_VO
                             || global_ii > PEAK_II
                             || global_vi > PEAK_VI
@@ -128,6 +110,11 @@ int security_error(void)
                             || global_ii < NULL_CURRENT
                             || global_vi < NULL_VOLTAGE_I)
         err=true;
+*/
+//    if (global_io > PEAK_IO || global_vo > PEAK_VO
+//                            || global_io < NULL_CURRENT
+//                            || global_vo < NULL_VOLTAGE_O)
+//        err=true;
 
     return err;
 }

@@ -17,14 +17,13 @@
 #define DIVISOR_R 0.2358 // 67.7k 219.4k. Solo si se usa el ADC interno del ESP32-S2
 
 
-#define ESP32_S2_MINI_I2C_SPEED_HZ      400000
+#define ESP32_S2_MINI_I2C_SPEED_HZ      300000
 #define ESP32_S2_MINI_SERIAL_SPEED_BAUD 9600
 
-#define ESP32_S2_MINI_PWM_1_CHANNEL         (uint8_t)0
-#define ESP32_S2_MINI_PWM_2_CHANNEL         (uint8_t)1
+// pines PWM definidos en pins.h
 #define ESP32_S2_MINI_PWM_FRECUENCY         5000
-#define ESP32_S2_MINI_DUTY_RESOLUTION       13
-#define ESP32_S2_MINI_PWM_MAX_VAL           8191 // duty 0 a 8191, steps de 0.00012
+#define ESP32_S2_MINI_DUTY_RESOLUTION       10
+#define ESP32_S2_MINI_PWM_MAX_VAL           1023 // duty 0 a 8191, steps de 0.00012
 
 #define LEDC_TIMER              LEDC_TIMER_0
 #define LEDC_MODE               LEDC_LOW_SPEED_MODE

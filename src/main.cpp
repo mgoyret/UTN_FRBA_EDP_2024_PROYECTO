@@ -9,13 +9,14 @@ void setup()
 {
     my_esp32s2_mini_setup();
     my_ads1115_setup();
+    set_duty(DUTY_CHARGE_INIT);
 }
 
 void loop()
 {
     update_meassures();
     state_machine();
-    //Serial.print("\n\nIN0: " + String(global_ii) + "\nIN1: " + String(global_vi) + "\nOUT0: " + String(global_io) + "\nOUT1: " + String(global_vo));
-    //delay(1000);
-}
+    Serial.print("Io: " + String(global_io*1000) + "mA\tVo: " + String(global_vo)+"\n");
 
+    delay(10);
+}
