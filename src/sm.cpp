@@ -27,11 +27,8 @@ void state_machine()
 			else if (global_io >= (float)(CHARGE_CONST_I * 1.15))
 				set_duty((float)(global_duty - (float)0.001));
 		}
-		if (global_vo >= CVCC_THRESHOLD) // COMPLETAR, creo que es asi, con corriente llega hasta el pico de tension y ahi cambio
-										// en teoria es asi, pero en la realidad habria que ver si no es hasta que llegue al 99.9%
-			{
+		if (global_vo >= CVCC_THRESHOLD)
 				present_state = STATE_CONSTANT_VOLTAGE;
-			}
 		break;
 
 	case STATE_CONSTANT_VOLTAGE:

@@ -7,7 +7,7 @@
 /* los siguientes valores salen de hacer los cambios con SOC 60%, 90% y 90%
 https://batteryuniversity.com/article/bu-409-charging-lithium-ion
 https://secondlifestorage.com/index.php?threads/panasonic-cgr18650h-cell-specifications.2573/ */
-#define CVCC_THRESHOLD  (float)4.2//2.52 // SOC 60%
+#define CVCC_THRESHOLD  (float)4//.2//2.52 // SOC 60%
 #define VO_HIGH         (float)3.99 // SOC 95%
 #define VO_FULL         (float)3.78 // SOC 90%
 
@@ -17,7 +17,7 @@ https://secondlifestorage.com/index.php?threads/panasonic-cgr18650h-cell-specifi
 #define DUTY_CHARGE_INIT    (float)0.64 // arrancar con un valor bien bajo pero que asegure carga, osea mayor a 0.5
 #define DUTY_DISCHARGE_INIT (float)0.45 // arrancamos con corriente de descarga bajita y la vamos estabilizando
 
-#define CHARGE_CONST_I      (float)0.100//0.980
+#define CHARGE_CONST_I      (float)0.500//0.980
 #define CHARGE_CONST_V      (float)4.2
 #define CHARGE_CUTOFF_I     (float)0.050
 #define CHARGE_MAX_I        (float)1.925
